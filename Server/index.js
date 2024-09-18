@@ -1,0 +1,49 @@
+const express = require('express')
+const mongoose = require('mongoose')
+const cors = require('cors')
+const TodoModel = require('./Models/Todo.js')
+
+const app = express()
+app.use(cors())
+app.use(express.json())
+let port = 3001
+
+mongoose.connect('mongodb://127.0.0.1:27017/test')
+
+app.post('/add',(req,res)=>{
+    const task = req.body.task;
+    TodoModel.create({
+        task:task
+    }).then(result =>res.json(result))
+    .catch(err=>res.json(err))
+})
+app.get('/get',(req,res)=>{
+    TodoModel.find()
+    .then(result=>res.json(result))
+    .catch(err=>res.json(err))
+})
+app.put('/update/:id', (req, res) => {
+    const { id } = req.params;
+    console.log('Update request for ID:', id);
+    
+    TodoModel.findByIdAndUpdate({ _id: id }, { done: true })
+      .then(result => {
+        console.log('Update result:', result);
+        res.json(result);
+      })
+      .catch(err => {
+        console.log('Error updating task:', err);
+        res.json(err);
+      });
+  });
+
+  app.delete('/delete/:id',(req,res)=>{
+    const {id} = req.params
+    TodoModel.findByIdAndDelete({_id:id})
+    .then(result=>res.json(result))
+    .catch(err=>res.json(err))
+  })
+
+app.listen(port,()=>{
+    console.log(`server has started at:${port}`);    
+})
