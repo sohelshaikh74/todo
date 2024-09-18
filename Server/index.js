@@ -6,7 +6,7 @@ const TodoModel = require('./Models/Todo.js')
 const app = express()
 app.use(cors())
 app.use(express.json())
-let port = 3001
+let port = process.env.PORT || 3001
 
 mongoose.connect('mongodb://127.0.0.1:27017/test')
 
